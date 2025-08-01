@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование объявления</title>
+</head>
+<body>
+    {% extends 'ads/index.html' %}
+
+    {% block content %}
+
+    <h1></h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+
+    {% endblock %}
+</body>
+</html>

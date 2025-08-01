@@ -1,0 +1,15 @@
+{% extends 'ads/index.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 600px;">
+    <h2 class="mb-4 text-center">Предложить новое обмен</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary mt-3">Отправить</button>
+    </form>
+</div>
+{% endblock %}
+

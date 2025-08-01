@@ -1,0 +1,89 @@
+{% extends 'ads/index.html' %}
+
+{% block title %}Предложения об обмене{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Предложения об обмене</h2>
+
+    <form method="get" class="row row-cols-lg-auto g-3 align-items-end mb-4">
+        <div class="col">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
+                <option value="">Все</option>
+                <option value="W" {% if status == 'W' %}selected{% endif %}>Ожидает</option>
+                <option value="Y" {% if status == 'Y' %}selected{% endif %}>Принято</option>
+                <option value="N" {% if status == 'N' %}selected{% endif %}>Отклонено</option>
+            </select>
+        </div>
+
+        <div class="col">
+            <label class="form-label">Отправитель (ID)</label>
+            <input name="sender" type="text" class="form-control" value="{{ sender_id }}">
+        </div>
+
+        <div class="col">
+            <label class="form-label">Получатель (ID)</label>
+            <input name="receiver" type="text" class="form-control" value="{{ receiver_id }}">
+        </div>
+
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Фильтровать</button>
+        </div>
+    </form>
+
+    {% if proposals %}
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        {% for proposal in proposals %}
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+
+                    <h5 class="card-title">
+                        От: <strong>{{ proposal.user.username }}</strong><br>
+                        Кому: <strong>{{ proposal.ad_receiver.user.username }}</strong>
+                    </h5>
+
+                    <p><strong>Он предлагает:</strong> {{ proposal.ad_sender.title }}</p>
+                    <p><strong>Хочет получить:</strong> {{ proposal.ad_receiver.title }}</p>
+
+                    {% if proposal.comment %}
+                        <p class="text-muted mt-2"><em>"{{ proposal.comment }}"</em></p>
+                    {% endif %}
+
+
+                    <span class="badge
+                        {% if proposal.status == 'Y' %} bg-success
+                        {% elif proposal.status == 'N' %} bg-danger
+                        {% else %} bg-warning text-dark
+                        {% endif %}">
+                        {{ proposal.get_status_display }}
+                    </span>
+
+
+                    {% if user == proposal.ad_receiver.user and proposal.status == 'W' %}
+                        <div class="mt-3 d-flex gap-2">
+                            <a href="{% url 'update_proposal_status' proposal.pk 'Y' %}"
+                               class="btn btn-success btn-sm">Принять</a>
+                            <a href="{% url 'update_proposal_status' proposal.pk 'N' %}"
+                               class="btn btn-danger btn-sm">Отклонить</a>
+                        </div>
+                    {% endif %}
+
+                    <p class="mt-3 text-end text-muted small">
+                        {{ proposal.created_at|date:"d.m.Y H:i" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+            <h3 class="text-muted">Нет предложений</h3>
+            <p class="text-muted mb-4">Попробуйте изменить фильтры.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
